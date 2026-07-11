@@ -19,8 +19,19 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
+# --- 路徑設定（重要修正） ---
+# 原本寫死 DATA_DIR = "Datas" 是「相對路徑」，會根據程式執行時的
+# 工作目錄（cwd）去找，而不是根據這支檔案自己的實際位置。
+# 在本機用 VS Code 開啟專案資料夾執行時，cwd 剛好等於專案根目錄，
+# 所以不會出錯；但部署到 Streamlit Community Cloud 後，cwd 有可能
+# 是 repo 最外層（而不是 app.py 所在的子資料夾），導致找不到 Datas/。
+#
+# 解法：改成以「這支檔案自己在磁碟上的位置」為基準去反推路徑，
+# 不管雲端的 cwd 設在哪裡，都能正確定位到 Datas 資料夾。
+# 這支檔案在 utils/kpi.py，所以要往上一層（.. ）才是專案根目錄。
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "Datas")
+
 
 def _p(filename):
     """組出 Datas 資料夾底下的檔案路徑"""
